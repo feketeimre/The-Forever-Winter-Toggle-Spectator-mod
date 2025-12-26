@@ -2,6 +2,7 @@ local UEHelpers = require("UEHelpers")
 
 local IsActive = false
 local pawn  -- to keep track of the original
+local photomode
 
 local function ToggleSpectator()
 	local gameplayStatics = UEHelpers.GetGameplayStatics()
@@ -23,6 +24,7 @@ local function ToggleSpectator()
     else
 		local spectatorPawn = playerController:K2_GetPawn()
 		playerController:Possess(pawn)  -- playerController posesses the original pawn
+		pawn.PossesBack()
 		spectatorPawn:K2_DestroyActor() -- get rid of spectator
 		IsActive = false
 		--print("[SpectatorMode] Disabled SpectatorMode")
@@ -36,6 +38,17 @@ RegisterKeyBind(Key.F8, {}, function()
 end)
 
 
+RegisterKeyBind(Key.F7, {}, function()
+    ExecuteInGameThread(function()
+		for _, pm in ipairs(FindAllOf("BPC_PhotoMode_C")) do
+			photomode = pm
+		end
+		photomode.UpdateReferences(true)
+		photomode.InitWidgets()
+		photomode.ResetPhotoMode()
+		--print ("photomode", photomode, photomode:GetFullName())
+    end)
+end)
 
 
 
